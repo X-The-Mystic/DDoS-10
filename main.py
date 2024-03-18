@@ -69,7 +69,7 @@ class DDoSAttackTool:
         self.attack_start_time = time.time()
         self.total_bytes_sent = 0
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor() as executor:
             for target in target_ips:
                 if self.stop_attack_flag:
                     break

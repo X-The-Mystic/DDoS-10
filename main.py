@@ -63,7 +63,7 @@ class DDoSAttackTool:
         tk.Button(self.root, text="Start Attack", command=self.start_attack).pack()
         tk.Button(self.root, text="Stop Attack", command=self.stop_attack).pack()
 
-   def start_attack(self):
+def start_attack(self):
     target_ips = self.get_target_ips()
     fake_ip = self.fake_ip_entry.get()
     port = int(self.port_entry.get())

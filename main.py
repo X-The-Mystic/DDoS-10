@@ -71,7 +71,7 @@ class DDoSAttackTool:
         burst_interval = float(self.burst_interval_entry.get())
         attack_type = self.attack_type_entry.get()
 
-         if attack_type == "UDP Flood":
+        if attack_type == "UDP Flood":
             attack_thread = threading.Thread(target=self.udp_flood_attack,
                                              args=(target_ips, port, num_packets, burst_interval))
         elif attack_type == "ICMP Echo":

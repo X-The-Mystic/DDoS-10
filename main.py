@@ -105,7 +105,7 @@ class DDoSAttackTool:
             for target in target_ips:
                 if self.stop_attack_flag:
                     break
-                executor.submit(attack_function, target, port, num_packets, burst_interval)
+                executor.submit(attack_type, target, port, num_packets, burst_interval)
                 time.sleep(1)  # Check the flag every second
 
                 # Update the attack speed label

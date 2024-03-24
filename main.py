@@ -119,7 +119,6 @@ class DDoSAttackTool:
         # Update the attack status label
         self.attack_status_label.config(text="Attack Status: Not in Progress")
         self.root.update()
-
       
     def stop_attack(self):
         self.stop_attack_flag = True

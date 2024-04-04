@@ -50,8 +50,8 @@ class DDoSAttackTool:
         self.burst_interval_entry.pack()
 
         tk.Label(self.root, text="Select Attack Vector").pack()
-        attack_type_menu = tk.OptionMenu(self.root, self.attack_type_entry, *self.attack_types)
-        attack_type_menu.pack()
+        attack_vector_menu = tk.OptionMenu(self.root, self.attack_vector_entry, *self.attack_vectors)
+        attack_vector_menu.pack()
 
         self.progress_bar = ttk.Progressbar(self.root, orient="horizontal", length=200, mode="determinate")
         self.progress_bar.pack()
@@ -71,7 +71,7 @@ class DDoSAttackTool:
         port = int(self.port_entry.get())
         num_packets = int(self.num_packets_entry.get())
         burst_interval = float(self.burst_interval_entry.get())
-        attack_type = self.attack_vector_entry.get()
+        attack_vector = self.attack_vector_entry.get()
 
         if attack_vector == "UDP Flood":
             attack_thread = threading.Thread(target=self.udp_flood_attack,
@@ -136,7 +136,7 @@ class DDoSAttackTool:
                 print(f"Invalid target: {target}")
         return target_ips
 
-    def get_attack_function(self, attack_type):
+    def get_attack_function(self, attack_vector):
         if attack_vector == "UDP Flood":
             return self.udp_flood_attack
         elif attack_vector == "ICMP Echo":
@@ -237,5 +237,5 @@ class DDoSAttackTool:
         self.root.mainloop()
 
 if __name__ == "__main__":
-    tool = DDoSAttackTool()
+    tool = DoSAttackTool()
     tool.run()

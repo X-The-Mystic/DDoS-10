@@ -18,7 +18,6 @@ class DDoSAttackTool:
         self.target_text = tk.Text(self.root, height=5, width=30)
         self.fake_ip_entry = tk.Entry(self.root)
         self.port_entry = tk.Entry(self.root)
-        self.port_entry.set("80")
         self.num_packets_entry = tk.Entry(self.root)
         self.burst_interval_entry = tk.Entry(self.root)
         self.attack_vector_entry = tk.StringVar(self.root)

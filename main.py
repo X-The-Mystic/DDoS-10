@@ -62,8 +62,8 @@ class DDoSAttackTool:
         self.attack_status_label = tk.Label(self.root, text="Attack Status: Not in Progress")
         self.attack_status_label.pack()
 
-        tk.Button(self.root, text="Start Attack", command=self.start_attack).pack()
-        tk.Button(self.root, text="Stop Attack", command=self.stop_attack).pack()
+        tk.Button(self.root, text="Execute Attack", command=self.start_attack).pack()
+        tk.Button(self.root, text="Quit Attack", command=self.stop_attack).pack()
 
     def start_attack(self):
         target_ips = self.get_target_ips()
